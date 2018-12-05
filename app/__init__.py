@@ -1,7 +1,7 @@
 from flask import Flask, Blueprint
 from instance.config import app_config
 from werkzeug.contrib.fixers import ProxyFix
-from db_config import create_tables
+from .db_config import create_tables
 
 # local imports
 from .api.v1 import version_one as v1
