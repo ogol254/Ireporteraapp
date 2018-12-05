@@ -5,6 +5,8 @@ from datetime import datetime, timedelta
 import jwt
 import os
 
+from flask import jsonify, make_response
+
 from ....db_config import init_db
 
 
@@ -98,6 +100,24 @@ class BaseModel(object):
             return "The token has expired"
         except jwt.InvalidTokenError:
             return "The token is invalid"
+
+    @staticmethod
+    def badrequest():
+        return make_response(jsonify({
+            "Message": "No authorization header provided. This resource is secured."
+        }), 400)
+
+    @staticmethod
+    def not_found(msg):
+        return make_response(jsonify({
+            "Message": "{} found".format(msg)
+        }), 404)
+
+    @staticmethod
+    def unauthorized():
+        return make_response(jsonify({
+            "Message": "You are not authorized to access this resource."
+        }), 401)
 
     def _type(self):
         """returns the name of the inheriting class"""

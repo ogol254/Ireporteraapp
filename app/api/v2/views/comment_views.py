@@ -32,9 +32,7 @@ class Comments(Resource):
 
         auth_header = request.headers.get('Authorization')
         if not auth_header:
-            return make_response(jsonify({
-                "Message": "No authorization header provided. This resource is secured."
-            }), 400)
+            return UserModel().badrequest()
 
         auth_token = auth_header.split(" ")[1]
         response = UserModel().decode_auth_token(auth_token)
@@ -68,9 +66,7 @@ class Comments(Resource):
                 return make_response(jsonify({"Message": "The comment has already been saved"}))
         else:
             # token is either invalid or expired
-            return make_response(jsonify({
-                "Message": "You are not authorized to access this resource."
-            }), 401)
+            return UserModel().unauthorized()
 
 
 @api.route("/<int:comment_id>")
@@ -81,9 +77,7 @@ class GetComment(Resource):
 
         auth_header = request.headers.get('Authorization')
         if not auth_header:
-            return make_response(jsonify({
-                "Message": "No authorization header provided. This resource is secured."
-            }), 400)
+            return UserModel().badrequest()
 
         auth_token = auth_header.split(" ")[1]
         response = UserModel().decode_auth_token(auth_token)
@@ -114,23 +108,17 @@ class GetComment(Resource):
                         "Message": "Updated successfully"
                     }), 201)
             else:
-                return make_response(jsonify({
-                    "Message": "comment not found"
-                }), 404)
+                return UserModel().not_found("Comment")
 
         else:
             # token is either invalid or expired
-            return make_response(jsonify({
-                "Message": "You are not authorized to access this resource."
-            }), 401)
+            return UserModel().unauthorized()
 
     def delete(self, comment_id):
 
         auth_header = request.headers.get('Authorization')
         if not auth_header:
-            return make_response(jsonify({
-                "Message": "No authorization header provided. This resource is secured."
-            }), 400)
+            return UserModel().badrequest()
 
         auth_token = auth_header.split(" ")[1]
         response = UserModel().decode_auth_token(auth_token)
@@ -149,12 +137,8 @@ class GetComment(Resource):
                     "Message": "Deleted successfully"
                 }), 200)
             else:
-                return make_response(jsonify({
-                    "Message": "Comment not found"
-                }), 404)
+                return UserModel().not_found("Comment")
 
         else:
             # token is either invalid or expired
-            return make_response(jsonify({
-                "Message": "You are not authorized to access this resource."
-            }), 401)
+            return UserModel().unauthorized()

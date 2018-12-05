@@ -14,12 +14,6 @@ api = IncidentDTO().api
 _n_incident = IncidentDTO().n_incident
 
 
-def badrequest():
-    return make_response(jsonify({
-        "Message": "No authorization header provided. This resource is secured."
-    }), 400)
-
-
 def _validate_incident(incident):
     """This function validates the user input and rejects or accepts it"""
     for key, value in incident.items():
@@ -59,7 +53,7 @@ class Incidents(Resource):
 
         auth_header = request.headers.get('Authorization')
         if not auth_header:
-            raise badrequest()
+            return UserModel().badrequest()
 
         auth_token = auth_header.split(" ")[1]
         response = UserModel().decode_auth_token(auth_token)
@@ -97,9 +91,7 @@ class Incidents(Resource):
                 return make_response(jsonify({"Message": "The incident has already been saved"}))
         else:
             # token is either invalid or expired
-            return make_response(jsonify({
-                "Message": "You are not authorized to access this resource."
-            }), 401)
+            return UserModel().unauthorized()
 
     def get(self):
         """This endpoint allows a registered user to post a question."""
@@ -120,7 +112,7 @@ class GetIncidents(Resource):
 
         auth_header = request.headers.get('Authorization')
         if not auth_header:
-            raise badrequest()
+            return UserModel().badrequest()
 
         auth_token = auth_header.split(" ")[1]
         response = UserModel().decode_auth_token(auth_token)
@@ -141,15 +133,13 @@ class GetIncidents(Resource):
             return resp, 200
         else:
             # token is either invalid or expired
-            return make_response(jsonify({
-                "Message": "You are not authorized to access this resource."
-            }), 401)
+            return UserModel().unauthorized()
 
     def put(self, incident_id):
 
         auth_header = request.headers.get('Authorization')
         if not auth_header:
-            raise badrequest()
+            return UserModel().badrequest()
 
         auth_token = auth_header.split(" ")[1]
         response = UserModel().decode_auth_token(auth_token)
@@ -180,21 +170,17 @@ class GetIncidents(Resource):
                         "Message": "Updated successfully"
                     }), 201)
             else:
-                return make_response(jsonify({
-                    "Message": "Incident not found"
-                }), 404)
+                raise UserModel().not_found("Incident")
 
         else:
             # token is either invalid or expired
-            return make_response(jsonify({
-                "Message": "You are not authorized to access this resource."
-            }), 401)
+            return UserModel().unauthorized()
 
     def delete(self, incident_id):
 
         auth_header = request.headers.get('Authorization')
         if not auth_header:
-            raise badrequest()
+            return UserModel().badrequest()
 
         auth_token = auth_header.split(" ")[1]
         response = UserModel().decode_auth_token(auth_token)
@@ -213,12 +199,8 @@ class GetIncidents(Resource):
                     "Message": "Deleted successfully"
                 }), 200)
             else:
-                return make_response(jsonify({
-                    "Message": "Incident not found"
-                }), 404)
+                return UserModel().not_found("Incident")
 
         else:
             # token is either invalid or expired
-            return make_response(jsonify({
-                "Message": "You are not authorized to access this resource."
-            }), 401)
+            return UserModel().unauthorized()
