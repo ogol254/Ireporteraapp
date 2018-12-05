@@ -1,7 +1,6 @@
 ## RODUCT NAME: iReporter
 
-[![Build Status](https://travis-ci.org/ogol254/Ireporteraapp.svg?branch=develop)](https://travis-ci.org/ogol254/Ireporteraapp)
-
+[![Build Status](https://travis-ci.org/ogol254/Ireporteraapp.svg?branch=develop)](https://travis-ci.org/ogol254/Ireporteraapp)   [![Maintainability](https://api.codeclimate.com/v1/badges/73c9a88f5c551f8f8560/maintainability)](https://codeclimate.com/github/ogol254/Ireporteraapp/maintainability)   [![codecov](https://codecov.io/gh/ogol254/Ireporteraapp/branch/develop/graph/badge.svg)](https://codecov.io/gh/ogol254/Ireporteraapp)
 
 ### Project Overview
 
