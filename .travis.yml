@@ -11,7 +11,7 @@ python:
 
 install:
   - pip install -r requirements.txt
-  - pip install coveralls
+  - pip install coveralls codecov
 
 services:
   - postgresql
@@ -27,3 +27,4 @@ script:
 
 after_success:
   - coveralls
+  - codecov --token=1ddf61d6-2791-4420-902c-a2bd31e17c4b

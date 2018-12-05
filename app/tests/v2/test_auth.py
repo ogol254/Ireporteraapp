@@ -57,6 +57,20 @@ class AuthTest(unittest.TestCase):
         self.assertEqual(new_user.status_code, 201)
         #self.assertEqual(result["Message"], "The username already exists")
 
+    def test_user_login(self):
+        """Test that a user can login using a POST request"""
+        self.post_data(data=self.user)
+        payload = {
+            "username": self.user['username'],
+            "password": self.user['password']
+        }
+        # attempt to log in
+        login = self.post_data('/api/v2/auth/signin', data=payload)
+        result = json.loads(login.data)
+        self.assertEqual(result["Message"], "Success")
+        self.assertEqual(login.status_code, 201)
+        self.assertTrue(result["access-token"])
+
     def tearDown(self):
         """This function destroys objests created during the test run"""
 

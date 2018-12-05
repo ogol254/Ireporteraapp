@@ -22,6 +22,7 @@ class TestingConfig(Config):
     """Testing Configurations."""
     DEBUG = True
     TESTING = True
+    DATABASE_URL = os.getenv("DATABASE_TEST_URL")
 
 
 class ReleaseConfig(Config):

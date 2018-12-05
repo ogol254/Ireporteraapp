@@ -1,9 +1,10 @@
 import psycopg2
 import os
+from flask import current_app
 
-url = os.getenv("DATABASE_URL")
+#url = os.getenv("DATABASE_URL")
 
-test_url = os.getenv("DATABASE_URL")
+#test_url = os.getenv("DATABASE_URL")
 
 
 def connection(connect_url):
@@ -12,18 +13,13 @@ def connection(connect_url):
 
 
 def init_db():
-    conn = connection(url)
-    curr = conn.cursor()
-    queries = tables()
-
-    for query in queries:
-        curr.execute(query)
-    conn.commit()
+    url = current_app.config['DATABASE_URL']
+    conn = psycopg2.connect(url)
     return conn
 
 
 def init_test_db():
-    conn = connection(test_url)
+    conn = connection(os.getenv('DATABASE_TEST_URL'))
     curr = conn.cursor()
     queries = tables()
 
@@ -34,12 +30,13 @@ def init_test_db():
 
 
 def destroy():
-    conn = connection(test_url)
+    conn = connection(os.getenv('DATABASE_TEST_URL'))
     curr = conn.cursor()
     comments = "DROP TABLE IF EXISTS comments CASCADE"
     incidents = "DROP TABLE IF EXISTS incidents CASCADE"
     users = "DROP TABLE IF EXISTS users CASCADE"
-    queries = [comments, incidents, users]
+    blacklist = "DROP TABLE IF EXISTS blacklist CASCADE"
+    queries = [comments, incidents, users, blacklist]
     try:
         for query in queries:
             curr.execute(query)
@@ -78,5 +75,9 @@ def tables():
     created_on timestamp with time zone DEFAULT ('now'::text)::date NOT NULL
     );"""
 
-    queries = [db2, db1, db3]
+    db4 = """CREATE TABLE IF NOT EXISTS blacklist (
+    tokens character varying(200) NOT NULL
+    );"""
+
+    queries = [db2, db1, db3, db4]
     return queries
