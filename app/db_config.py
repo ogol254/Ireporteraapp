@@ -1,9 +1,9 @@
 import psycopg2
+import os
 
-url = "dbname='ireporter' host='localhost' port='5432' user='Mcogol' password='root'"
+url = os.getenv("DATABASE_URL")
 
-test_url = "dbname='ireporter_test' host='localhost'\
-                 port='5432' user='Mcogol' password='root'"
+test_url = os.getenv("DATABASE_TEST_URL")
 
 
 def connection(connect_url):

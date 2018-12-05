@@ -1,9 +1,10 @@
 language: python
 
 env:
-  DATABASE_URL="dbname='ireporter' host='127.0.0.1' port='5432' user='mcogol' password=''"
-  DATABASE_TEST_URL="dbname='ireporter' host='127.0.0.1' port='5432' user='mcogol' password=''"
+  DATABASE_URL="dbname='ireporter' host='127.0.0.1' port='5432' user='postgres' password=''"
+  DATABASE_TEST_URL="dbname='ireporter' host='127.0.0.1' port='5432' user='postgres' password=''"
   APP_SETTINGS="testing"
+  SECRET_KEY="mcogol"
 
 python:
   - "3.6"
@@ -18,8 +19,8 @@ addons:
   postgresql: "9.6"
 
 before_script:
-  - psql -c 'CREATE DATABASE ireporter' -U mcogol
-  - psql -c "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public to mcogol ;" -U mcogol
+  - psql -c 'CREATE DATABASE ireporter' -U postgres
+  - psql -c "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public to postgres ;" -U postgres
 
 script:
   - pytest --with-coverage app/tests
