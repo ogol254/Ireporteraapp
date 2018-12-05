@@ -64,7 +64,7 @@ class AuthTest(unittest.TestCase):
         )
         # attempt to log in
         login = self.post_data('/api/v2/auth/signin', data=payload)
-        self.assertEqual(login.json['Message'], 'Success')
+        self.assertEqual(login.json["Message"], "Success")
 
     def tearDown(self):
         """This function destroys objests created during the test run"""
