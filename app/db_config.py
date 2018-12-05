@@ -3,7 +3,7 @@ import os
 
 url = os.getenv("DATABASE_URL")
 
-test_url = os.getenv("DATABASE_TEST_URL")
+test_url = os.getenv("DATABASE_URL")
 
 
 def connection(connect_url):
@@ -13,22 +13,24 @@ def connection(connect_url):
 
 def init_db():
     conn = connection(url)
-    return conn
-
-
-def init_test_db():
-    conn = connection(test_url)
-    return conn
-
-
-def create_tables():
-    conn = psycopg2.connect(url)
     curr = conn.cursor()
     queries = tables()
 
     for query in queries:
         curr.execute(query)
     conn.commit()
+    return conn
+
+
+def init_test_db():
+    conn = connection(test_url)
+    curr = conn.cursor()
+    queries = tables()
+
+    for query in queries:
+        curr.execute(query)
+    conn.commit()
+    return conn
 
 
 def destroy():

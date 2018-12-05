@@ -9,8 +9,8 @@ from random import choice, randint
 
 # local imports
 from ... import create_app
-from ...db_config import destroy
 from ...db_config import init_test_db
+from ...db_config import destroy
 
 
 class AuthTest(unittest.TestCase):
@@ -52,8 +52,10 @@ class AuthTest(unittest.TestCase):
         """Test that a new user can sign up using a POST request
         """
         new_user = self.post_data(data=self.user)
+        result = json.loads(new_user.data)
         # test that the server responds with the correct status code
         self.assertEqual(new_user.status_code, 201)
+        #self.assertEqual(result["Message"], "The username already exists")
 
     def test_user_login(self):
         """Test that a user can login using a POST request"""
@@ -64,7 +66,10 @@ class AuthTest(unittest.TestCase):
         )
         # attempt to log in
         login = self.post_data('/api/v2/auth/signin', data=payload)
-        self.assertEqual(login.json["Message"], "Success")
+        result = json.loads(login.data)
+        self.assertEqual(result["Message"], "Success")
+        self.assertEqual(login.status_code, 201)
+        self.assertTrue(result["access-token"])
 
     def tearDown(self):
         """This function destroys objests created during the test run"""

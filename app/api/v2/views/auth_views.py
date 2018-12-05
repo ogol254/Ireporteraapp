@@ -113,4 +113,4 @@ class AuthLogin(Resource):
         return make_response(jsonify({
             "Message": "Success",
             "access-token": token
-        }))
+        }), 201)

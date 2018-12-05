@@ -1,7 +1,6 @@
 from flask import Flask, Blueprint
 from instance.config import app_config
 from werkzeug.contrib.fixers import ProxyFix
-from .db_config import create_tables
 
 # local imports
 from .api.v1 import version_one as v1
@@ -15,8 +14,6 @@ def create_app(config_name='development'):
     app.config.from_pyfile('config.py')
 
     app.wsgi_app = ProxyFix(app.wsgi_app)
-
-    create_tables()
 
     app.register_blueprint(v1)
     app.register_blueprint(v2)
