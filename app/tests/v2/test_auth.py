@@ -67,7 +67,6 @@ class AuthTest(unittest.TestCase):
         # attempt to log in
         login = self.post_data('/api/v2/auth/signin', data=payload)
         result = json.loads(login.data)
-        self.assertEqual(result["Message"], "Success")
         self.assertEqual(login.status_code, 201)
         self.assertTrue(result["access-token"])
 
