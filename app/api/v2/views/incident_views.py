@@ -14,6 +14,12 @@ api = IncidentDTO().api
 _n_incident = IncidentDTO().n_incident
 
 
+def badrequest():
+    return make_response(jsonify({
+        "Message": "No authorization header provided. This resource is secured."
+    }), 400)
+
+
 def _validate_incident(incident):
     """This function validates the user input and rejects or accepts it"""
     for key, value in incident.items():
@@ -53,9 +59,7 @@ class Incidents(Resource):
 
         auth_header = request.headers.get('Authorization')
         if not auth_header:
-            return make_response(jsonify({
-                "Message": "No authorization header provided. This resource is secured."
-            }), 400)
+            raise badrequest()
 
         auth_token = auth_header.split(" ")[1]
         response = UserModel().decode_auth_token(auth_token)
@@ -116,9 +120,7 @@ class GetIncidents(Resource):
 
         auth_header = request.headers.get('Authorization')
         if not auth_header:
-            return make_response(jsonify({
-                "Message": "No authorization header provided. This resource is secured."
-            }), 400)
+            raise badrequest()
 
         auth_token = auth_header.split(" ")[1]
         response = UserModel().decode_auth_token(auth_token)
@@ -147,9 +149,7 @@ class GetIncidents(Resource):
 
         auth_header = request.headers.get('Authorization')
         if not auth_header:
-            return make_response(jsonify({
-                "Message": "No authorization header provided. This resource is secured."
-            }), 400)
+            raise badrequest()
 
         auth_token = auth_header.split(" ")[1]
         response = UserModel().decode_auth_token(auth_token)
@@ -194,9 +194,7 @@ class GetIncidents(Resource):
 
         auth_header = request.headers.get('Authorization')
         if not auth_header:
-            return make_response(jsonify({
-                "Message": "No authorization header provided. This resource is secured."
-            }), 400)
+            raise badrequest()
 
         auth_token = auth_header.split(" ")[1]
         response = UserModel().decode_auth_token(auth_token)
