@@ -1,4 +1,4 @@
-from views import Users, SingleUser
+from .views import Users, SingleUser
 
 
 from flask_restful import Api, Resource

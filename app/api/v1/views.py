@@ -1,7 +1,7 @@
 from flask_restful import Resource
 from flask import jsonify, make_response, request
 
-from models import UsersModel
+from .models import UsersModel
 
 
 class Users(Resource, UsersModel):

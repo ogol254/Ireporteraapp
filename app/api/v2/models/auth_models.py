@@ -1,7 +1,7 @@
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from ....db_config import init_db
-from base_model import BaseModel
+from .base_model import BaseModel
 
 
 class UserModel(BaseModel):
