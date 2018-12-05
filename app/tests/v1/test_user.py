@@ -25,13 +25,10 @@ class TestUsers(unittest.TestCase):
         result = json.loads(response.data)
         self.assertEqual(response.status_code, 201)
 
-    def test_redundat_post():
+    def test_redundat_post(self):
         response = self.app.post('/api/v1/users', data=json.dumps(self.data2), content_type='application/json')
         result = json.loads(response.data)
         self.assertEqual(result["Users"], "User already exist")
-
-    def test_user_edit(self):
-        pass
 
 
 if __name__ == '__main__':

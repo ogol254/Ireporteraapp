@@ -35,7 +35,7 @@ class UsersModel():
             else:
                 return "No such user"
 
-    def user_validator(name):
+    def user_validator(self, name):
         for user in self.db:
             if (name == user['name']):
                 return True

@@ -1,5 +1,7 @@
 ## RODUCT NAME: iReporter
 
+[![Build Status](https://travis-ci.org/ogol254/Ireporteraapp.svg?branch=master)](https://travis-ci.org/ogol254/Ireporteraapp)
+
 ### Project Overview
 
 
@@ -17,7 +19,11 @@ Corruption is a huge bane to Africa’s development. African countries must deve
 * Users can add geolocation (Lat Long Coordinates) to their red-flag or intervention records.
 * Users can change the geolocation (Lat Long Coordinates) attached to their red-flag or intervention records.
 * Admin can change the status of a record to either under investigation, rejected (in the event of a false claim) or resolved (in the event that the claim has been investigated and resolved).
-Optional Features
+
+
+####Optional Features
+
+
 * Users can add images to their red-flag or intervention records, to support their claims.
 * Users can add videos to their red-flag or intervention records, to support their claims.
 * The application should display a Google Map with Marker showing the red-flag or intervention location.

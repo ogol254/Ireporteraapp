@@ -1,6 +1,6 @@
 import psycopg2
 
-url = "dbname='ireporter_test' host='localhost' port='5432' user='Mcogol' password='root'"
+url = "dbname='ireporter' host='localhost' port='5432' user='Mcogol' password='root'"
 
 test_url = "dbname='ireporter_test' host='localhost'\
                  port='5432' user='Mcogol' password='root'"
@@ -29,6 +29,21 @@ def create_tables():
     for query in queries:
         curr.execute(query)
     conn.commit()
+
+
+def destroy():
+    conn = connection(test_url)
+    curr = conn.cursor()
+    comments = "DROP TABLE IF EXISTS comments CASCADE"
+    incidents = "DROP TABLE IF EXISTS incidents CASCADE"
+    users = "DROP TABLE IF EXISTS users CASCADE"
+    queries = [comments, incidents, users]
+    try:
+        for query in queries:
+            curr.execute(query)
+        conn.commit()
+    except:
+        print("Fail")
 
 
 def tables():
