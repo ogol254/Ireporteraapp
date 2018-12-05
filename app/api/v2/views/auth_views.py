@@ -114,3 +114,29 @@ class AuthLogin(Resource):
             "Message": "Success",
             "access-token": token
         }), 201)
+
+
+@api.route('/signout')
+class AuthLogout(Resource):
+    """This class collects the methods for the  endpoint"""
+
+    def post(self):
+        """This endpoint allows a registered user to logout."""
+        auth_header = request.headers.get('Authorization')
+        if not auth_header:
+            return make_response(jsonify({
+                "Message": "No authorization header provided. This resource is secured."
+            }), 400)
+        auth_token = auth_header.split(" ")[1]
+        response = UserModel().decode_auth_token(auth_token)
+        if isinstance(response, str):
+            # token is either invalid or expired
+            return make_response(jsonify({
+                "Message": "You are not authorized to access this resource. {}".format(response)
+            }), 401)
+        else:
+            # the token decoded succesfully
+            # logout the user
+            user_token=UserModel().logout_user(auth_token)
+            resp=dict()
+            return {"message": "logout successful. {}".format(user_token)}, 200

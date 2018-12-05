@@ -59,3 +59,18 @@ class UserModel(BaseModel):
         database.commit()
         curr.close()
         return ("{} saved sucessfully".format(username))
+
+    def logout_user(self, token):
+        """This function logs out a user by adding thei token to the blacklist table"""
+        conn = self.db
+        curr = conn.cursor()
+        query = """
+                INSERT INTO blacklist 
+                VALUES (%(tokens)s) RETURNING tokens;
+                """
+        inputs = {"tokens": token}
+        curr.execute(query, inputs)
+        blacklisted_token = curr.fetchone()[0]
+        conn.commit()
+        curr.close()
+        return blacklisted_token
