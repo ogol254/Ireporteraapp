@@ -13,16 +13,6 @@ api = CommentDTO().api
 _n_comment = CommentDTO().n_comment
 
 
-def _validate_input(req):
-    """This function validates the user input and rejects or accepts it"""
-    for key, value in req.items():
-        # ensure keys have values
-        if not value:
-            return("{} is lacking. It is a required field".format(key))
-        elif len(value) < 10:
-            return("The {} is too short. Please add more content.".format(key))
-
-
 @api.route("/")
 class Comments(Resource):
     """This class collects the methods for the auth/signup method"""
@@ -87,8 +77,6 @@ class GetComment(Resource):
             update = request.get_json()
             if not update:
                 return make_response(jsonify({"Message": "Provide data in the request"}))
-
-            _validate_input(update)
 
             exists = CommentModel().check_item_exists(table="comments", field="comment_id", data=comment_id)
             if (exists == True):

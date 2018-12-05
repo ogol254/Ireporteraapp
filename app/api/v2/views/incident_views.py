@@ -14,36 +14,6 @@ api = IncidentDTO().api
 _n_incident = IncidentDTO().n_incident
 
 
-def _validate_incident(incident):
-    """This function validates the user input and rejects or accepts it"""
-    for key, value in incident.items():
-        # ensure keys have values
-        if not value:
-            return make_response(jsonify({
-                "Message": "{} is lacking. It is a required field".format(key)
-            }), 400)
-        # validate length
-        if key == "description" or key == "location":
-            if len(value) < 4:
-                return make_response(jsonify({
-                    "Message": "The {} provided is too short".format(key)
-                }), 400)
-
-        # if key == "type":
-            # if value not "Red-Flag" or "Intervention":
-                # return("{} can only be Red-Flag or Intervention.".format(key))
-
-
-def _validate_input(req):
-    """This function validates the user input and rejects or accepts it"""
-    for key, value in req.items():
-        # ensure keys have values
-        if not value:
-            return("{} is lacking. It is a required field".format(key))
-        elif len(value) < 10:
-            return("The {} is too short. Please add more content.".format(key))
-
-
 @api.route("/")
 class Incidents(Resource):
     """This class collects the methods for the auth/signup method"""
@@ -77,7 +47,6 @@ class Incidents(Resource):
                 "location": location,
                 "status": "Pending"
             }
-            _validate_incident(new_incident)
             incident_model = IncidentModel(**new_incident)
             try:
                 saved = incident_model.save_incident()
@@ -149,8 +118,6 @@ class GetIncidents(Resource):
             update = request.get_json()
             if not update:
                 return make_response(jsonify({"Message": "Provide data in the request"}))
-
-            _validate_input(update)
 
             exists = IncidentModel().check_item_exists(table="incidents", field="incident_id", data=incident_id)
             if (exists == True):
