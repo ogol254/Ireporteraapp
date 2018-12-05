@@ -9,7 +9,6 @@ Flask-RESTful==0.3.6
 flask-restplus==0.12.1
 Flask-Testing==0.7.1
 funcsigs==1.0.2
-functools32==3.2.3.post2
 itsdangerous==0.24
 Jinja2==2.10
 jsonschema==2.6.0
