@@ -112,7 +112,8 @@ class AuthLogin(Resource):
 
         return make_response(jsonify({
             "Message": "Success",
-            "access-token": token
+            "access-token": token,
+            "username": username
         }), 201)
 
 
@@ -137,6 +138,6 @@ class AuthLogout(Resource):
         else:
             # the token decoded succesfully
             # logout the user
-            user_token=UserModel().logout_user(auth_token)
-            resp=dict()
+            user_token = UserModel().logout_user(auth_token)
+            resp = dict()
             return {"message": "logout successful. {}".format(user_token)}, 200
