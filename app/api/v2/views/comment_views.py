@@ -20,11 +20,11 @@ class Comments(Resource):
     @api.expect(_n_comment, validate=True)
     def post(self):
 
-        auth_header = request.headers.get('Authorization')
-        if not auth_header:
+        head_t = request.headers.get('Authorization')
+        if not head_t:
             return UserModel().badrequest()
 
-        auth_token = auth_header.split(" ")[1]
+        auth_token = head_t.split(" ")[1]
         response = UserModel().decode_auth_token(auth_token)
         if not isinstance(response, str):
             # the token decoded succesfully
@@ -65,11 +65,11 @@ class GetComment(Resource):
 
     def put(self, comment_id):
 
-        auth_header = request.headers.get('Authorization')
-        if not auth_header:
+        t_header = request.headers.get('Authorization')
+        if not t_header:
             return UserModel().badrequest()
 
-        auth_token = auth_header.split(" ")[1]
+        auth_token = t_header.split(" ")[1]
         response = UserModel().decode_auth_token(auth_token)
         if not isinstance(response, str):
             # the token decoded succesfully
@@ -78,22 +78,22 @@ class GetComment(Resource):
             if not update:
                 return make_response(jsonify({"Message": "Provide data in the request"}))
 
-            exists = CommentModel().check_item_exists(table="comments", field="comment_id", data=comment_id)
-            if (exists == True):
+            _exists = CommentModel().check_item_exists(table="comments", field="comment_id", data=comment_id)
+            if _exists == True:
 
                 updated = update.items()
 
                 for field, data in updated:
-                    table = "comments"
+                    table_name = "comments"
                     item_field = "comment_id"
-                    CommentModel().update_item(table=table,
+                    CommentModel().update_item(table=table_name,
                                                field=field,
                                                data=data,
                                                item_field=item_field,
                                                item_id=int(comment_id))
 
                     return make_response(jsonify({
-                        "Message": "Updated successfully"
+                        "Message": "{} updated successfully".format(field)
                     }), 201)
             else:
                 return UserModel().not_found("Comment")
@@ -104,22 +104,20 @@ class GetComment(Resource):
 
     def delete(self, comment_id):
 
-        auth_header = request.headers.get('Authorization')
-        if not auth_header:
+        header_token = request.headers.get('Authorization')
+        if not header_token:
             return UserModel().badrequest()
 
-        auth_token = auth_header.split(" ")[1]
+        auth_token = header_token.split(" ")[1]
         response = UserModel().decode_auth_token(auth_token)
         if not isinstance(response, str):
             # the token decoded succesfully
 
-            exists = CommentModel().check_item_exists(table="comments", field="comment_id", data=comment_id)
-            if (exists == True):
+            exist_s = CommentModel().check_item_exists(table="comments", field="comment_id", data=comment_id)
+            if (exist_s == True):
+                table_ = "comments"
 
-                table_name = "comments"
-                field = 'comment_id'
-
-                CommentModel().delete_item(table_name=table_name, field=field, field_value=comment_id)
+                CommentModel().delete_item(table_name=table_, field="comment_id", field_value=comment_id)
 
                 return make_response(jsonify({
                     "Message": "Deleted successfully"
