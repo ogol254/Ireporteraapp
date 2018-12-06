@@ -115,6 +115,21 @@ class TestQuestions(unittest.TestCase):
         self.assertEqual(incident.status_code, 200)
         self.assertEqual(incident.json['message'], 'success')
 
+    def test_edit_incident(self):
+        """Test that a user can delete a question that they have posted"""
+        user = self.create_user()
+        auth_token = user[1]
+        headers = {"Authorization": "Bearer {}".format(auth_token)}
+        new_incident = self.post_data()
+        path = "/api/v2/incidents/1"
+        data = {"description": "edited incident"}
+        result = self.client.put(path,
+                                 headers=headers,
+                                 data=json.dumps(data),
+                                 content_type='application/json')
+        self.assertEqual(result.status_code, 201)
+        self.assertEqual(result.json['Message'], "Tuple updated successfully")
+
     def test_delete_incident(self):
         """Test that a user can delete a question that they have posted"""
         user = self.create_user()

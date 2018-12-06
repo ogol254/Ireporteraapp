@@ -120,7 +120,7 @@ class GetComment(Resource):
 
                     return make_response(jsonify({
                         "Message": "{} updated successfully".format(field)
-                    }), 201)
+                    }), 202)
             else:
                 raise NotFound("Comment not found")
 

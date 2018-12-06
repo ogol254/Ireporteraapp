@@ -117,6 +117,21 @@ class TestQuestions(unittest.TestCase):
         correct_token = self.post_comment()
         self.assertEqual(correct_token.status_code, 201)
 
+    def test_edit_comment(self):
+        """Test that a user can delete a question that they have posted"""
+        user = self.create_user()
+        auth_token = user[1]
+        new_comment_id = int(self.post_comment(auth_token=auth_token).json['comment_id'])
+        headers = {"Authorization": "Bearer {}".format(auth_token)}
+        path = "/api/v2/incident/comment/{}".format(new_comment_id)
+        data = {"comment": "edited comment"}
+        result = self.client.put(path,
+                                 headers=headers,
+                                 data=json.dumps(data),
+                                 content_type='application/json')
+        self.assertEqual(result.status_code, 202)
+        self.assertEqual(result.json['Message'], "comment updated successfully")
+
     def test_delete_comment(self):
         """Test that a user can delete a question that they have posted"""
         user = self.create_user()
