@@ -48,7 +48,7 @@ class Comments(Resource):
                 c_omment = comment_model.save_comment()
                 if c_omment:
                     return make_response(jsonify({
-                        "Message": "Comment saved successfully"
+                        "Message": c_omment
                     }), 201)
                 else:
                     raise ValueError
