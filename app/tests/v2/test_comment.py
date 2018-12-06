@@ -50,17 +50,14 @@ class TestQuestions(unittest.TestCase):
         self.client = self.app.test_client()
         self.incident = {
             "location": "Nairobi",
-            "description": "Corruption case",
+            "description": "Corruption case one baad",
             "incident_type": "Red-Flag"
         }
-        self.comment = {
-            "comment": "The matter is under investigation",
-            "incident_id": 1
-        }
+
         with self.app.app_context():
             self.db = init_test_db()
 
-    def post_data_incident(self, path='/api/v2/incidents', auth_token=2, data={}, headers=0):
+    def post_comment(self, path='/api/v2/incidents', auth_token=2, data={}, headers=0):
         """This function performs a POST request using the testing client"""
         if not data:
             data = self.incident
@@ -69,24 +66,19 @@ class TestQuestions(unittest.TestCase):
             auth_token = user[1]
         if not headers:
             headers = {"Authorization": "Bearer {}".format(auth_token)}
-        result = self.client.post(path, data=json.dumps(data),
-                                  headers=headers,
-                                  content_type='application/json')
-        return result
+        resp = self.client.post(path, data=json.dumps(data),
+                                headers=headers,
+                                content_type='application/json')
 
-    def post_data_comment(self, path='/api/v2/incident/comment', auth_token=2, data={}, headers=0):
-        """This function performs a POST request using the testing client"""
-        if not data:
-            data = self.comment
-        if auth_token is 2:
-            user = self.create_user()
-            auth_token = user[1]
-        if not headers:
-            headers = {"Authorization": "Bearer {}".format(auth_token)}
-        result = self.client.post(path, data=json.dumps(data),
-                                  headers=headers,
-                                  content_type='application/json')
-        return result
+        new_comment_data = {
+            "comment": "The matter is under investigation",
+            "incident_id": 1
+        }
+
+        comment_post = self.client.post(path='/api/v2/incident/comment', data=json.dumps(new_comment_data),
+                                        headers=headers,
+                                        content_type='application/json')
+        return comment_post
 
     def get_data(self, path='/api/v2/incident/comment'):
         """This function performs a GET request to a given path
@@ -98,8 +90,7 @@ class TestQuestions(unittest.TestCase):
     def test_post_comment(self):
         """Test that a user can post a comment
         """
-        new_incident = self.post_data_incident()
-        new_comment = self.post_data_comment()
+        new_comment = self.post_comment()
         # test that the server responds with the correct status code
         self.assertEqual(new_comment.status_code, 201)
         self.assertTrue(new_comment.json['Message'])
@@ -107,7 +98,11 @@ class TestQuestions(unittest.TestCase):
     def test_post_comment_without_incident(self):
         """Test that a user can post a comment
         """
-        new_comment = self.post_data_comment()
+        data = {
+            "comment": "The matter is under investigation",
+            "incident_id": 10
+        }
+        new_comment = self.post_comment(data=data)
         # test that the server responds with the correct status code
         self.assertEqual(new_comment.status_code, 201)
         self.assertTrue(new_comment.json['Message'])
@@ -116,11 +111,24 @@ class TestQuestions(unittest.TestCase):
     def test_unauthorized_request(self):
         """Test that the endpoint rejects unauthorized requests"""
         # test false token
-        false_token = self.post_data_comment(headers=dict(Authorization="Bearer wrongtoken"))
+        false_token = self.post_comment(headers=dict(Authorization="Bearer wrongtoken"))
         self.assertEqual(false_token.status_code, 401)
         # test correct token
-        correct_token = self.post_data_incident()
+        correct_token = self.post_comment()
         self.assertEqual(correct_token.status_code, 201)
+
+    def test_delete_comment(self):
+        """Test that a user can delete a question that they have posted"""
+        user = self.create_user()
+        auth_token = user[1]
+        new_comment_id = int(self.post_comment(auth_token=auth_token).json['comment_id'])
+        headers = {"Authorization": "Bearer {}".format(auth_token)}
+        path = "/api/v2/incident/comment/{}".format(new_comment_id)
+        result = self.client.delete(path,
+                                    headers=headers,
+                                    content_type='application/json')
+        self.assertEqual(result.status_code, 202)
+        self.assertEqual(result.json['Message'], 'Deleted successfully')
 
     def tearDown(self):
         """This function destroys items created during the test run"""

@@ -85,7 +85,8 @@ class Incidents(Resource):
 
                 else:
                     return make_response(jsonify({
-                        "Message": "New Incident saved successfully"
+                        "Message": "New Incident saved successfully",
+                        "incident_id": _incident_saved
                     }), 201)
             except ValueError:
                 return make_response(jsonify({"Message": "The incident has already been saved"}))

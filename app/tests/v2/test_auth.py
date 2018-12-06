@@ -84,6 +84,11 @@ class AuthTest(unittest.TestCase):
         self.assertEqual(login.status_code, 201)
         self.assertTrue(result["access-token"])
 
+    def test_error_messages(self):
+        """Test that the endpoint responds with the correct error message"""
+        empty_req = self.client.post("/api/v2/auth/signup", data={})
+        self.assertEqual(empty_req.status_code, 400)
+
     def test_user_logout(self):
         """Test that the user can logout using a POST request"""
         new_user = self.user_login()

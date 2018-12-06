@@ -57,18 +57,27 @@ class Comments(Resource):
                 "comment": comment
             }
             _validate_input(new_comment)
-            comment_model = CommentModel(**new_comment)
-            try:
-                c_omment = comment_model.save_comment()
-                if c_omment:
-                    return make_response(jsonify({
-                        "Message": c_omment
-                    }), 201)
-                else:
-                    raise ValueError
 
-            except ValueError:
-                return make_response(jsonify({"Message": "The comment has already been saved"}))
+            in_exist = CommentModel().check_item_exists(table="incidents", field="incident_id", data=new_comment['incident_id'])
+            if (in_exist == True):
+                comment_model = CommentModel(**new_comment)
+                c_omment = comment_model.save_comment()
+                try:
+                    if not c_omment:
+                        raise ValueError
+                    else:
+                        return make_response(jsonify({
+                            "Message": "New comment saved successfully",
+                            "comment_id": c_omment
+                        }), 201)
+
+                except ValueError:
+                    return make_response(jsonify({"Message": "The comment has already been saved"}))
+            else:
+                return make_response(jsonify({
+                    "Message": "The incident you are trying to comment is not found"
+                }), 201)
+
         else:
             # token is either invalid or expired
             raise Unauthorized("You are not authorized to access this resource.")
@@ -137,7 +146,7 @@ class GetComment(Resource):
                     CommentModel().delete_item(table_name="comments", field="comment_id", field_value=comment_id)
                     return make_response(jsonify({
                         "Message": "Deleted successfully"
-                    }), 200)
+                    }), 202)
 
             else:
                 # token is either invalid or expired

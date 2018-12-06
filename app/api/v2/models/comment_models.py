@@ -30,25 +30,20 @@ class CommentModel(BaseModel):
             "comment": self.comment,
         }
         # check if incident exists
-        in_exist = BaseModel().check_item_exists(table="incidents", field="incident_id", data=comment['incident_id'])
 
-        if (in_exist == True):
-            if BaseModel().check_exists(table="comments", field="comment", data=comment['comment']):
-                return False
-            else:
-                database = self.db
-                curr = database.cursor()
-                query = """INSERT INTO comments (created_by, incident_id, comment) \
-                    VALUES ( %(created_by)s, %(incident_id)s, %(comment)s) RETURNING comment_id;
-                    """
-                curr.execute(query, comment)
-                comment_id = curr.fetchone()[0]
-                database.commit()
-                curr.close()
-                return "Comment saved successfully"
+        if BaseModel().check_exists(table="comments", field="comment", data=comment['comment']):
+            return False
 
-        else:
-            return "The incident you are trying to comment is not found"
+        database = self.db
+        curr = database.cursor()
+        query = """INSERT INTO comments (created_by, incident_id, comment) \
+            VALUES ( %(created_by)s, %(incident_id)s, %(comment)s) RETURNING comment_id;
+            """
+        curr.execute(query, comment)
+        comment_id = curr.fetchone()[0]
+        database.commit()
+        curr.close()
+        return comment_id
 
     def get_all_comments_by_incident(self, incident_id):
         """return all incidents from the db given a username"""

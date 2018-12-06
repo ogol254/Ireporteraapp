@@ -84,6 +84,20 @@ class TestQuestions(unittest.TestCase):
         # test that the server responds with the correct status code
         self.assertEqual(new_incident.status_code, 201)
         self.assertTrue(new_incident.json['Message'])
+        self.assertTrue(new_incident.json['incident_id'])
+
+    def test_post_bad_data(self):
+        """Test that a user can post a question
+        """
+        data = {
+            "location": "Nairobi",
+            "description": "Corruption case",
+            "incident_type": ""
+        }
+        new_incident = self.post_data(data=data)
+        # test that the server responds with the correct status code
+        self.assertEqual(new_incident.status_code, 400)
+        self.assertEqual(new_incident.json['message'], "incident_type is lacking. It is a required field")
 
     def test_unauthorized_request(self):
         """Test that the endpoint rejects unauthorized requests"""
@@ -101,7 +115,7 @@ class TestQuestions(unittest.TestCase):
         self.assertEqual(incident.status_code, 200)
         self.assertEqual(incident.json['message'], 'success')
 
-    def test_delete_question(self):
+    def test_delete_incident(self):
         """Test that a user can delete a question that they have posted"""
         user = self.create_user()
         auth_token = user[1]
