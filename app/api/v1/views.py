@@ -28,23 +28,3 @@ class Users(Resource, UsersModel):
             "Users": resp,
             "msg": "success"
         }), 200)
-
-
-class SingleUser(Resource, UsersModel):
-    """docstring for SingleUser"""
-
-    def __init__(self):
-        self.user = UsersModel()
-
-    def get(self, id):
-        resp = self.user.get_single_user(id)
-        return make_response(jsonify({
-            "Users": resp,
-            "msg": "success"
-        }), 200)
-
-    def put(sel, id):
-        pass
-
-    def delete(self, id):
-        pass

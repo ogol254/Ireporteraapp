@@ -1,4 +1,4 @@
-from .views import Users, SingleUser
+from .views import Users
 
 
 from flask_restful import Api, Resource
@@ -10,4 +10,3 @@ api = Api(version_one)
 
 
 api.add_resource(Users, '/users')
-api.add_resource(SingleUser, '/users/<int:id>')
