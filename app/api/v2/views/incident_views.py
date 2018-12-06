@@ -21,12 +21,12 @@ class Incidents(Resource):
     @api.expect(_n_incident, validate=True)
     def post(self):
 
-        auth_header = request.headers.get('Authorization')
-        if not auth_header:
+        _auth = request.headers.get('Authorization')
+        if not _auth:
             return UserModel().badrequest()
 
-        auth_token = auth_header.split(" ")[1]
-        response = UserModel().decode_auth_token(auth_token)
+        auth_t_oken = _auth.split(" ")[1]
+        response = UserModel().decode_auth_token(auth_t_oken)
         if not isinstance(response, str):
             # the token decoded succesfully
             user_id = response
@@ -83,8 +83,8 @@ class GetIncidents(Resource):
         if not auth_header:
             return UserModel().badrequest()
 
-        auth_token = auth_header.split(" ")[1]
-        response = UserModel().decode_auth_token(auth_token)
+        _auth_token = auth_header.split(" ")[1]
+        response = UserModel().decode_auth_token(_auth_token)
         if not isinstance(response, str):
             # the token decoded succesfully
             incident = IncidentModel().get_specific_incident(incident_id)
@@ -110,8 +110,8 @@ class GetIncidents(Resource):
         if not auth_header:
             return UserModel().badrequest()
 
-        auth_token = auth_header.split(" ")[1]
-        response = UserModel().decode_auth_token(auth_token)
+        token = auth_header.split(" ")[1]
+        response = UserModel().decode_auth_token(token)
         if not isinstance(response, str):
             # the token decoded succesfully
 
@@ -119,22 +119,21 @@ class GetIncidents(Resource):
             if not update:
                 return make_response(jsonify({"Message": "Provide data in the request"}))
 
-            exists = IncidentModel().check_item_exists(table="incidents", field="incident_id", data=incident_id)
-            if (exists == True):
+            _available = IncidentModel().check_item_exists(table="incidents", field="incident_id", data=incident_id)
+            if (_available == True):
 
                 updated = update.items()
 
                 for field, data in updated:
-                    table = "incidents"
-                    item_field = "incident_id"
-                    IncidentModel().update_item(table=table,
+                    _table_name = "incidents"
+                    IncidentModel().update_item(table=_table_name,
                                                 field=field,
                                                 data=data,
-                                                item_field=item_field,
+                                                item_field="incident_id",
                                                 item_id=int(incident_id))
 
                     return make_response(jsonify({
-                        "Message": "Updated successfully"
+                        "Message": "Tuple updated successfully"
                     }), 201)
             else:
                 raise UserModel().not_found("Incident")
@@ -145,22 +144,21 @@ class GetIncidents(Resource):
 
     def delete(self, incident_id):
 
-        auth_header = request.headers.get('Authorization')
-        if not auth_header:
+        auth_token_header = request.headers.get('Authorization')
+        if not auth_token_header:
             return UserModel().badrequest()
 
-        auth_token = auth_header.split(" ")[1]
-        response = UserModel().decode_auth_token(auth_token)
+        auth_header = auth_token_header.split(" ")[1]
+        response = UserModel().decode_auth_token(auth_header)
         if not isinstance(response, str):
             # the token decoded succesfully
 
-            exists = IncidentModel().check_item_exists(table="incidents", field="incident_id", data=incident_id)
-            if (exists == True):
+            resp_available = IncidentModel().check_item_exists(table="incidents", field="incident_id", data=incident_id)
+            if (resp_available == True):
 
-                table_name = "incidents"
-                field = 'incident_id'
+                tablename = "incidents"
 
-                IncidentModel().delete_item(table_name=table_name, field=field, field_value=incident_id)
+                IncidentModel().delete_item(table_name=tablename, field="incident_id", field_value=incident_id)
 
                 return make_response(jsonify({
                     "Message": "Deleted successfully"
