@@ -110,7 +110,7 @@ class BaseModel(object):
     @staticmethod
     def not_found(msg):
         return make_response(jsonify({
-            "Message": "{} found".format(msg)
+            "Message": "{} not found".format(msg)
         }), 404)
 
     @staticmethod

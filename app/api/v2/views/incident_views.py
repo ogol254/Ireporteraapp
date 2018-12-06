@@ -4,6 +4,7 @@ import string
 from flask_restplus import Resource
 from flask import jsonify, make_response, request
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.exceptions import BadRequest, NotFound, Unauthorized, Forbidden
 
 from ..models.auth_models import UserModel
 from ..models.incidence_models import IncidentModel
@@ -12,6 +13,32 @@ from ..utils.serializers import IncidentDTO
 
 api = IncidentDTO().api
 _n_incident = IncidentDTO().n_incident
+
+
+def _validate_incident(incident):
+    """This function validates the user input and rejects or accepts it"""
+    for key, value in incident.items():
+        # ensure keys have values
+        if not value:
+            raise BadRequest("{} is lacking. It is a required field".format(key))
+        # validate length
+        if key == "description" or key == "location":
+            if len(value) < 4:
+                raise BadRequest("The {} provided is too short".format(key))
+
+        # if key == "incident_type":
+         #   if value != "Red-Flag" or value != "Intervention":
+          #      raise BadRequest("{} can only be Red-Flag or Intervention.".format(key))
+
+
+def _validate_input(req):
+    """This function validates the user input and rejects or accepts it"""
+    for key, value in req.items():
+        # ensure keys have values
+        if not value:
+            raise BadRequest("{} is lacking. It is a required field".format(key))
+        elif len(value) < 10:
+            raise BadRequest("The {} is too short. Please add more content.".format(key))
 
 
 @api.route("/")
@@ -23,7 +50,7 @@ class Incidents(Resource):
 
         _auth = request.headers.get('Authorization')
         if not _auth:
-            return UserModel().badrequest()
+            raise BadRequest("No authorization header provided. This resource is secured.")
 
         auth_t_oken = _auth.split(" ")[1]
         response = UserModel().decode_auth_token(auth_t_oken)
@@ -47,6 +74,8 @@ class Incidents(Resource):
                 "location": location,
                 "status": "Pending"
             }
+
+            _validate_incident(new_incident)
             incident_model = IncidentModel(**new_incident)
             try:
                 _incident_saved = incident_model.save_incident()
@@ -62,7 +91,7 @@ class Incidents(Resource):
                 return make_response(jsonify({"Message": "The incident has already been saved"}))
         else:
             # token is either invalid or expired
-            return UserModel().unauthorized()
+            raise Unauthorized("You are not authorized to access this resource.")
 
     def get(self):
         """This endpoint allows a registered user to post a question."""
@@ -83,7 +112,7 @@ class GetIncidents(Resource):
 
         auth_header = request.headers.get('Authorization')
         if not auth_header:
-            return UserModel().badrequest()
+            raise BadRequest("No authorization header provided. This resource is secured.")
 
         _auth_token = auth_header.split(" ")[1]
         response = UserModel().decode_auth_token(_auth_token)
@@ -104,13 +133,13 @@ class GetIncidents(Resource):
             return resp, 200
         else:
             # token is either invalid or expired
-            return UserModel().unauthorized()
+            raise Unauthorized("You are not authorized to access this resource.")
 
     def put(self, incident_id):
 
         auth_header = request.headers.get('Authorization')
         if not auth_header:
-            return UserModel().badrequest()
+            raise BadRequest("No authorization header provided. This resource is secured.")
 
         token = auth_header.split(" ")[1]
         response = UserModel().decode_auth_token(token)
@@ -120,6 +149,8 @@ class GetIncidents(Resource):
             update = request.get_json()
             if not update:
                 return make_response(jsonify({"Message": "Provide data in the request"}))
+
+            _validate_input(update)
 
             _available = IncidentModel().check_item_exists(table="incidents", field="incident_id", data=incident_id)
             if (_available == True):
@@ -138,17 +169,17 @@ class GetIncidents(Resource):
                         "Message": "Tuple updated successfully"
                     }), 201)
             else:
-                raise UserModel().not_found("Incident")
+                raise NotFound("Incident")
 
         else:
             # token is either invalid or expired
-            return UserModel().unauthorized()
+            raise Unauthorized("You are not authorized to access this resource.")
 
     def delete(self, incident_id):
 
         access_t = request.headers.get('Authorization')
         if not access_t:
-            return UserModel().badrequest()
+            raise BadRequest("No authorization header provided. This resource is secured.")
 
         auth_ = access_t.split(" ")[1]
         response = UserModel().decode_auth_token(auth_)
@@ -164,10 +195,10 @@ class GetIncidents(Resource):
 
                 return make_response(jsonify({
                     "Message": "Deleted successfully"
-                }), 200)
+                }), 202)
             else:
                 return UserModel().not_found("Incident")
 
         else:
             # token is either invalid or expired
-            return UserModel().unauthorized()
+            raise Unauthorized("You are not authorized to access this resource.")

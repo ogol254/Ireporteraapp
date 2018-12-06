@@ -101,6 +101,19 @@ class TestQuestions(unittest.TestCase):
         self.assertEqual(incident.status_code, 200)
         self.assertEqual(incident.json['message'], 'success')
 
+    def test_delete_question(self):
+        """Test that a user can delete a question that they have posted"""
+        user = self.create_user()
+        auth_token = user[1]
+        headers = {"Authorization": "Bearer {}".format(auth_token)}
+        new_incident = self.post_data()
+        path = "/api/v2/incidents/1"
+        result = self.client.delete(path,
+                                    headers=headers,
+                                    content_type='application/json')
+        self.assertEqual(result.status_code, 202)
+        self.assertEqual(result.json['Message'], 'Deleted successfully')
+
     def tearDown(self):
         """This function destroys items created during the test run"""
         with self.app.app_context():

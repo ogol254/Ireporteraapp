@@ -4,6 +4,7 @@ import json
 import re
 import string
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.exceptions import BadRequest, NotFound, Unauthorized, Forbidden
 
 from ..models.auth_models import UserModel
 from ..utils.serializers import UserDTO
@@ -18,17 +19,17 @@ def _validate_user(user):
     for key, value in user.items():
         # ensure keys have values
         if not value:
-            return("{} is lacking. It is a required field".format(key))
+            raise BadRequest("{} is lacking. It is a required field".format(key))
         # validate length
         if key == "username" or key == "password":
             if len(value) < 5:
-                return("The {} provided is too short".format(key))
+                raise BadRequest("The {} provided is too short".format(key))
             elif len(value) > 15:
-                return("The {} provided is too long".format(key))
+                raise BadRequest("The {} provided is too long".format(key))
         if key == "first_name" or key == "last_name" or key == "username":
             for i in value:
                 if i not in string.ascii_letters:
-                    return("{} cannot have non-alphabetic characters.".format(key))
+                    raise BadRequest("{} cannot have non-alphabetic characters.".format(key))
 
 
 @api.route("/signup")

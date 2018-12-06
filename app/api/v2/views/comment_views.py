@@ -4,6 +4,7 @@ import string
 from flask_restplus import Resource
 from flask import jsonify, make_response, request
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.exceptions import BadRequest, NotFound, Unauthorized, Forbidden
 
 from ..models.auth_models import UserModel
 from ..models.comment_models import CommentModel
@@ -11,6 +12,18 @@ from ..utils.serializers import CommentDTO
 
 api = CommentDTO().api
 _n_comment = CommentDTO().n_comment
+
+
+def _validate_input(req):
+    """This function validates the user input and rejects or accepts it"""
+    for key, value in req.items():
+        # ensure keys have values
+        if not value:
+            raise BadRequest("{} is lacking. It is a required field".format(key))
+
+        if key == "comment":
+            if len(value) < 5:
+                raise BadRequest("The {} provided is too short".format(key))
 
 
 @api.route("/")
@@ -22,7 +35,7 @@ class Comments(Resource):
 
         head_t = request.headers.get('Authorization')
         if not head_t:
-            return UserModel().badrequest()
+            raise BadRequest("No authorization header provided. This resource is secured.")
 
         auth_token = head_t.split(" ")[1]
         response = UserModel().decode_auth_token(auth_token)
@@ -43,6 +56,7 @@ class Comments(Resource):
                 "incident_id": incident_id,
                 "comment": comment
             }
+            _validate_input(new_comment)
             comment_model = CommentModel(**new_comment)
             try:
                 c_omment = comment_model.save_comment()
@@ -57,7 +71,7 @@ class Comments(Resource):
                 return make_response(jsonify({"Message": "The comment has already been saved"}))
         else:
             # token is either invalid or expired
-            return UserModel().unauthorized()
+            raise Unauthorized("You are not authorized to access this resource.")
 
 
 @api.route("/<int:comment_id>")
@@ -68,7 +82,7 @@ class GetComment(Resource):
 
         t_header = request.headers.get('Authorization')
         if not t_header:
-            return UserModel().badrequest()
+            raise BadRequest("No authorization header provided. This resource is secured.")
 
         auth_token = t_header.split(" ")[1]
         response = UserModel().decode_auth_token(auth_token)
@@ -78,6 +92,8 @@ class GetComment(Resource):
             update = request.get_json()
             if not update:
                 return make_response(jsonify({"Message": "Provide data in the request"}))
+
+            _validate_input(update)
 
             _exists = CommentModel().check_item_exists(table="comments", field="comment_id", data=comment_id)
             if _exists == True:
@@ -97,11 +113,11 @@ class GetComment(Resource):
                         "Message": "{} updated successfully".format(field)
                     }), 201)
             else:
-                return UserModel().not_found("Comment")
+                raise NotFound("Comment not found")
 
         else:
             # token is either invalid or expired
-            return UserModel().unauthorized()
+            raise Unauthorized("You are not authorized to access this resource.")
 
     def delete(self, comment_id):
 
@@ -123,10 +139,10 @@ class GetComment(Resource):
                         "Message": "Deleted successfully"
                     }), 200)
                 else:
-                    return UserModel().not_found("Comment")
+                    raise NotFound("Comment not found")
 
             else:
                 # token is either invalid or expired
-                return UserModel().unauthorized()
+                raise Unauthorized("You are not authorized to access this resource.")
         else:
-            return UserModel().badrequest()
+            raise BadRequest("No authorization header provided. This resource is secured.")
