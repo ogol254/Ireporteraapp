@@ -101,23 +101,12 @@ class BaseModel(object):
         except jwt.InvalidTokenError:
             return "The token is invalid"
 
-    @staticmethod
-    def badrequest():
-        return make_response(jsonify({
-            "Message": "No authorization header provided. This resource is secured."
-        }), 400)
-
-    @staticmethod
-    def not_found(msg):
-        return make_response(jsonify({
-            "Message": "{} not found".format(msg)
-        }), 404)
-
-    @staticmethod
-    def unauthorized():
-        return make_response(jsonify({
-            "Message": "You are not authorized to access this resource."
-        }), 401)
+    def check_exists(self, table, field, data):
+        """Check if the records exist"""
+        curr = self.db.cursor()
+        query = "SELECT * FROM {} WHERE {}='{}'".format(table, field, data)
+        curr.execute(query)
+        return curr.fetchone() is not None
 
     def _type(self):
         """returns the name of the inheriting class"""

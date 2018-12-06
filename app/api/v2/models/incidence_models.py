@@ -38,13 +38,6 @@ class IncidentModel(BaseModel):
         else:
             return "Incident does not exists"
 
-    def check_exists(self, description):
-        """Check if the records exist"""
-        curr = self.db.cursor()
-        query = "SELECT description FROM incidents WHERE description = '%s'" % (description)
-        curr.execute(query)
-        return curr.fetchone() is not None
-
     def save_incident(self):
         """Add incident details to the database"""
         incident = {
@@ -54,8 +47,8 @@ class IncidentModel(BaseModel):
             "status": self.status,
             "location": self.location
         }
-        # check if user exists
-        if self.check_exists(incident['description']):
+        # check if incident exists
+        if BaseModel().check_exists(table="incidents", field="description", data=incident['description']):
             return False
         database = self.db
         curr = database.cursor()

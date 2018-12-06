@@ -33,7 +33,7 @@ class CommentModel(BaseModel):
         in_exist = BaseModel().check_item_exists(table="incidents", field="incident_id", data=comment['incident_id'])
 
         if (in_exist == True):
-            if self.check_comment_exists(comment['comment']):
+            if BaseModel().check_exists(table="comments", field="comment", data=comment['comment']):
                 return False
             else:
                 database = self.db
