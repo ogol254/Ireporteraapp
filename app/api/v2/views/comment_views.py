@@ -106,26 +106,27 @@ class GetComment(Resource):
     def delete(self, comment_id):
 
         _h_ = request.headers.get('Authorization')
-        if not _h_:
-            return UserModel().badrequest()
+        if _h_:
 
-        auth_token = _h_.split(" ")[1]
-        response = UserModel().decode_auth_token(auth_token)
-        if not isinstance(response, str):
-            # the token decoded succesfully
+            auth_token = _h_.split(" ")[1]
+            response = UserModel().decode_auth_token(auth_token)
+            if not isinstance(response, str):
+                # the token decoded succesfully
 
-            exist_s = CommentModel().check_item_exists(table="comments", field="comment_id", data=comment_id)
-            if (exist_s == True):
-                table_ = "comments"
+                exist_s = CommentModel().check_item_exists(table="comments", field="comment_id", data=comment_id)
+                if (exist_s == True):
+                    table_ = "comments"
 
-                CommentModel().delete_item(table_name=table_, field="comment_id", field_value=comment_id)
+                    CommentModel().delete_item(table_name=table_, field="comment_id", field_value=comment_id)
 
-                return make_response(jsonify({
-                    "Message": "Deleted successfully"
-                }), 200)
+                    return make_response(jsonify({
+                        "Message": "Deleted successfully"
+                    }), 200)
+                else:
+                    return UserModel().not_found("Comment")
+
             else:
-                return UserModel().not_found("Comment")
-
+                # token is either invalid or expired
+                return UserModel().unauthorized()
         else:
-            # token is either invalid or expired
-            return UserModel().unauthorized()
+            return UserModel().badrequest()
