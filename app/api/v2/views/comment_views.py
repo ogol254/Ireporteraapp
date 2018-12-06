@@ -105,11 +105,11 @@ class GetComment(Resource):
 
     def delete(self, comment_id):
 
-        header_token = request.headers.get('Authorization')
-        if not header_token:
+        _h_ = request.headers.get('Authorization')
+        if not _h_:
             return UserModel().badrequest()
 
-        auth_token = header_token.split(" ")[1]
+        auth_token = _h_.split(" ")[1]
         response = UserModel().decode_auth_token(auth_token)
         if not isinstance(response, str):
             # the token decoded succesfully
