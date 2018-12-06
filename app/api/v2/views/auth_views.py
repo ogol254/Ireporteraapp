@@ -63,12 +63,12 @@ class AuthSignup(Resource):
         _validate_user(user)
         user_model = UserModel(**user)
         try:
-            saved = user_model.save_user()
-            if not saved:
+            _u_s = user_model.save_user()
+            if not _u_s:
                 raise ValueError
             else:
                 return make_response(jsonify({
-                    "Message": saved
+                    "Message": _u_s
                 }), 201)
         except ValueError:
             return make_response(jsonify({"Message": "The username already exists"}))

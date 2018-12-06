@@ -45,13 +45,14 @@ class Comments(Resource):
             }
             comment_model = CommentModel(**new_comment)
             try:
-                saved = comment_model.save_comment()
-                if not saved:
-                    raise ValueError
-                else:
+                c_omment = comment_model.save_comment()
+                if c_omment:
                     return make_response(jsonify({
-                        "Message": saved
+                        "Message": "Comment saved successfully"
                     }), 201)
+                else:
+                    raise ValueError
+
             except ValueError:
                 return make_response(jsonify({"Message": "The comment has already been saved"}))
         else:

@@ -49,9 +49,11 @@ class Incidents(Resource):
             }
             incident_model = IncidentModel(**new_incident)
             try:
-                saved = incident_model.save_incident()
-                if not saved:
+                _incident_saved = incident_model.save_incident()
+                if not _incident_saved:
+
                     raise ValueError
+
                 else:
                     return make_response(jsonify({
                         "Message": "New Incident saved successfully"
@@ -144,12 +146,12 @@ class GetIncidents(Resource):
 
     def delete(self, incident_id):
 
-        auth_token_header = request.headers.get('Authorization')
-        if not auth_token_header:
+        access_t = request.headers.get('Authorization')
+        if not access_t:
             return UserModel().badrequest()
 
-        auth_header = auth_token_header.split(" ")[1]
-        response = UserModel().decode_auth_token(auth_header)
+        auth_ = access_t.split(" ")[1]
+        response = UserModel().decode_auth_token(auth_)
         if not isinstance(response, str):
             # the token decoded succesfully
 

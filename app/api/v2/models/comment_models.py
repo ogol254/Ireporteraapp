@@ -45,7 +45,6 @@ class CommentModel(BaseModel):
                 comment_id = curr.fetchone()[0]
                 database.commit()
                 curr.close()
-                return "Comment saved successfully"
 
         else:
             return "No incident with an ID of {}".format(comment['incident_id'])
