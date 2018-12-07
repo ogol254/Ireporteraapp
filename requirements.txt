@@ -9,6 +9,7 @@ Flask-RESTful==0.3.6
 flask-restplus==0.12.1
 Flask-Testing==0.7.1
 funcsigs==1.0.2
+gunicorn==19.9.0
 itsdangerous==1.1.0
 Jinja2==2.10
 jsonschema==2.6.0
@@ -21,6 +22,7 @@ psycopg2-binary==2.7.6.1
 py==1.7.0
 PyJWT==1.7.0
 pytest==4.0.1
+pytest-cov==2.6.0
 pytz==2018.7
 scandir==1.9.0
 six==1.11.0
