@@ -15,13 +15,6 @@ class CommentModel(BaseModel):
         self.comment = comment
         self.db = init_db()
 
-    def check_comment_exists(self, comment):
-        """Check if the records exist"""
-        curr = self.db.cursor()
-        query = "SELECT comment FROM comments WHERE comment = '%s'" % (comment)
-        curr.execute(query)
-        return curr.fetchone() is not None
-
     def save_comment(self):
         """Add incident details to the database"""
         comment = {
